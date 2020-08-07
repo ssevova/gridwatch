@@ -8,13 +8,15 @@ import datetime
 def getArguments():
     parser = ArgumentParser()
     parser.add_argument("production")
-    parser.add_argument("-p", "--prefix", default="group.phys-exot")
-    parser.add_argument("-u", "--user", default="Philipp Gadow")
+    parser.add_argument("-p", "--prefix", default="user.ssevova")
+    parser.add_argument("-u", "--user", default="Stanislava Sevova")
     return parser
 
 def getInfo(production, prefix, user):
-    out = check_output(["/eos/user/p/pgadow/www/gridwatch/pandamon", "-u", str(user), "-d", "90", str(prefix) + "*" + str(production) + "*.EXOT27"])
-    out = out.split("\n")
+    out = check_output(["/eos/user/s/ssevova/www/gwatch/pandamon", "-u", str(user), "-d", "90", str(prefix) + "*" + str(production) + ".*"])
+    splt = "\n"
+    bsplt = splt.encode('UTF-8')
+    out = out.split(bsplt)
     out = [line.split() for line in out]
     return out
 
@@ -27,21 +29,21 @@ def getStatusColour(status):
     return '#2F4F4F' # dark slategray
 
 def writeHTML(info, production, user):
-    with open('/eos/user/p/pgadow/www/gridwatch/monosww_'+production+'.html', 'w') as outFile:
+    with open('/eos/user/s/ssevova/www/gwatch/'+production+'.html', 'w') as outFile:
         # write HTML header
         outFile.write("""
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Mono-s(WW) ntuple creation tag {production}</title>
+    <title>ZHyyD ntuple creation tag {production}</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
   <div class="container">
-    <h1>Mono-s(WW) ntuple generation</h1> 
+    <h1>ZH->yyD ntuple generation: {production} </h1> 
   <p>Last updated: {date}</p> 
 </div>
     <table style="width:100%">
@@ -56,7 +58,7 @@ def writeHTML(info, production, user):
     <th>{percent}</th> 
     <th><a href="https://bigpanda.cern.ch/tasks/?reqid={taskid}&username={user}&days=180">{name}</a></th>
   </tr>
-""".format(status=line[0], percent=line[2], name=line[3], taskid=line[1], user=user.replace(' ', '%20'), fontcolour=getStatusColour(line[0])))
+            """.format(status=line[0].decode('UTF-8') , percent=line[2].decode('UTF-8'), name=line[3].decode('UTF-8'), taskid=line[1].decode('UTF-8'), user=user.replace(' ', '%20'), fontcolour=getStatusColour(line[0].decode('UTF-8'))))
 
         # write HTML footer
         outFile.write("""

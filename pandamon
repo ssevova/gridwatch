@@ -29,13 +29,16 @@ _h_more_info_string = 'print even more information about your jobs!'
 _def_user='GRID_USER_NAME'
 _def_stream='OUT'
 
-import urllib2
+from urllib import request, parse
+#import urllib2
 import urllib
 import json
 import sys, os
 import re
 import argparse
 import datetime
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 _headers = {'Accept': 'application/json',
             'Content-Type':'application/json'}
@@ -100,8 +103,8 @@ def get_request(taskname, user, days=None, json=True, force=False):
         pars['timestamp'] = datetime.datetime.utcnow().strftime('%H:%M:%S')
     if days is not None:
         pars['days'] = days
-    url = 'https://bigpanda.cern.ch/tasks/?' + urllib.urlencode(pars)
-    return urllib2.Request(url, headers=_headers)
+    url = 'https://bigpanda.cern.ch/tasks/?' + urllib.parse.urlencode(pars)
+    return urllib.request.Request(url, headers=_headers)
 
 def get_ds_stream(entry, streamfrag):
     datasets = entry['datasets']
@@ -176,7 +179,7 @@ def stdin_iter(args):
         if task[-1] not in '/*':
             task = task + '*'
         req = get_request(task, args.user, args.days)
-        for ds in json.loads(urllib2.urlopen(req).read().decode('utf-8')):
+        for ds in json.loads(urllib.request.urlopen(req).read().decode('utf-8')):
             yield ds
 
 def run():
@@ -193,7 +196,7 @@ def run():
         if args.print_browser_string:
             sys.stdout.write(req.get_full_url() + '\n')
             return 0
-        reply = urllib2.urlopen(req).read().decode('utf-8')
+        reply = urllib.request.urlopen(req).read().decode('utf-8')
         if args.print_json_reply:
             sys.stdout.write(reply)
             return 0

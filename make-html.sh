@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cd /eos/user/p/pgadow/www/gridwatch && python make-html.py SWWnom0011 -u "Philipp Gadow" -p group.phys-exotics
+cd /eos/user/s/ssevova/www/gwatch && python make-html.py ZHyyD_v07 -u "Stanislava Sevova" -p user.ssevova
